@@ -52,16 +52,19 @@ func startRater(internalRaterChan chan *engine.Responder, internalBalancerChan c
 	waitTasks = append(waitTasks, cacheTaskChan)
 	go func() {
 		defer close(cacheTaskChan)
-		if err := ratingDb.CacheRatingAll(); err != nil {
-			utils.Logger.Crit(fmt.Sprintf("Cache rating error: %s", err.Error()))
-			exitChan <- true
-			return
-		}
-		if err := accountDb.CacheAccountingPrefixes(); err != nil { // Used to cache load history
-			utils.Logger.Crit(fmt.Sprintf("Cache accounting error: %s", err.Error()))
-			exitChan <- true
-			return
-		}
+		ratingDb.CacheRatingAll()
+		accountDb.CacheAccountingPrefixes()
+		// if err := ratingDb.CacheRatingAll(); err != nil {
+		// 	utils.Logger.Crit(fmt.Sprintf("Cache rating error: %s", err.Error()))
+		// 	exitChan <- true
+		// 	return
+		// }
+
+		// if err := accountDb.CacheAccountingPrefixes(); err != nil { // Used to cache load history
+		// 	utils.Logger.Crit(fmt.Sprintf("Cache accounting error: %s", err.Error()))
+		// 	exitChan <- true
+		// 	return
+		// }
 
 	}()
 
